@@ -60,6 +60,4 @@ interface RNSESubscriber
     public function onSetupHold(int $times): void;
 
     public function onSetupLong(): void;
-
-    public function isTvMode(): bool;
 }

@@ -22,7 +22,6 @@ readonly class KodiRNSESubscriber implements RNSESubscriber
     public function __construct(
         private OutputInterface $output,
         private HTTPJSONRPCKodiControls $controls,
-        private KodiRNSETVModeSubscriber $tvSubscriber,
     ) {
     }
 
@@ -170,10 +169,5 @@ readonly class KodiRNSESubscriber implements RNSESubscriber
     {
         $this->controls->playPause();
         $this->output->writeln('KodiRNSESubscriber setup long');
-    }
-
-    public function isTvMode(): bool
-    {
-        return $this->tvSubscriber->isTvModeActive();
     }
 }
