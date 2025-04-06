@@ -25,6 +25,7 @@ class MFSWReader implements Reader
         private readonly OutputInterface $output,
         private readonly MFSWSubscriber $subscriber,
         private readonly CarModelReader $carModelListener,
+        private readonly RNSETVModeSubscriber $tvSubscriber,
     ) {
     }
 
@@ -59,7 +60,7 @@ class MFSWReader implements Reader
             // Scan Wheel Down
             '8E/3905', '8P/390C', '8J/390C' => $this->onWheelDown($frame),
             // Scan Wheel Press
-            '8E/3908', '8P/3908', '8J/3908' => $this->onWheelPress($frame),
+            '8E/3908', '8P/3908', '8J/3908' => $this->onWheelPress(),
             default => ''
         };
 
@@ -72,6 +73,13 @@ class MFSWReader implements Reader
     {
         $this->press = 0;
         $this->output->writeln('MFSWListener: onWheelUp');
+
+        if (!$this->tvSubscriber->isTvModeActive()) {
+            $this->output->writeln('MFSWListener: TV Mode not active, will not act');
+
+            return;
+        }
+
         $this->subscriber->onWheelUp($frame);
     }
 
@@ -79,16 +87,41 @@ class MFSWReader implements Reader
     {
         $this->press = 0;
         $this->output->writeln('MFSWListener: onWheelDown');
+
+        if (!$this->tvSubscriber->isTvModeActive()) {
+            $this->output->writeln('MFSWListener: TV Mode not active, will not act');
+
+            return;
+        }
+
         $this->subscriber->onWheelDown($frame);
     }
 
-    public function onWheelPress(CanBusFrame $frame): void
+    public function onWheelPress(): void
     {
+        $this->output->writeln('MFSWListener: onWheelPress');
+
+        if (!$this->tvSubscriber->isTvModeActive()) {
+            $this->output->writeln('MFSWListener: TV Mode not active, will not act');
+
+            return;
+        }
+
         ++$this->press;
     }
 
     public function onWheelRelease(CanBusFrame $frame): void
     {
+        $this->output->writeln('MFSWListener: onWheelRelease');
+
+        if (!$this->tvSubscriber->isTvModeActive()) {
+            $this->output->writeln('MFSWListener: TV Mode not active, will not act');
+
+            $this->press = 0;
+
+            return;
+        }
+
         if (0 === $this->press) {
             return;
         }

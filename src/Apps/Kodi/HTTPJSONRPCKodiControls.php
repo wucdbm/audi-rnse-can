@@ -44,6 +44,8 @@ class HTTPJSONRPCKodiControls implements KodiControls
             RequestOptions::HEADERS => [
                 'Content-Type' => 'application/json',
             ],
+            RequestOptions::CONNECT_TIMEOUT => 0.005,
+            RequestOptions::TIMEOUT => 0.005,
             'base_uri' => $url,
         ]);
     }
