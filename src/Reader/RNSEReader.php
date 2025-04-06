@@ -75,7 +75,7 @@ class RNSEReader implements Reader
             $frame->toString()
         ));
 
-        if ('8101123700000000' === $frame->getBytesString() || '8301123700000000' === $frame->getBytesString()) {
+        if ('8101123700000000' === $frame->getDataString() || '8301123700000000' === $frame->getDataString()) {
             $this->onTvModeActive($frame);
         } else {
             $this->onTvModeInactive($frame);
@@ -102,7 +102,7 @@ class RNSEReader implements Reader
             $frame->toString()
         ));
 
-        match ($frame->getBytesString()) {
+        match ($frame->getDataString()) {
             '373001004001' => $this->subscriber->onScrollLeft(),
             '373001002001' => $this->subscriber->onScrollRight(),
             '373001400000' => $this->up->press(),

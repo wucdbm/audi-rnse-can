@@ -32,15 +32,15 @@ class CarModelReader implements Reader
             $frame->toString()
         ));
 
-        $firstTwo = substr($frame->getBytesString(), 0, 2);
+        $firstTwo = substr($frame->getDataString(), 0, 2);
 
         if ('01' !== $firstTwo) {
             // I actually don't know, python code did that
             return;
         }
 
-        $carModel = substr($frame->getBytesString(), 8, 4);
-        $carYear = substr($frame->getBytesString(), 14, 2);
+        $carModel = substr($frame->getDataString(), 8, 4);
+        $carYear = substr($frame->getDataString(), 14, 2);
 
         $this->model = hex2bin($carModel);
         $this->year = (int)hexdec($carYear) + 2000;

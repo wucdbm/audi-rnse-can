@@ -40,7 +40,7 @@ class MFSWReader implements Reader
         $type = sprintf(
             '%s/%s',
             $this->carModelListener->getModel(),
-            $frame->getBytesString(),
+            $frame->getDataString(),
         );
 
         match ($type) {
@@ -52,7 +52,7 @@ class MFSWReader implements Reader
             '8E/3908', '8P/3908', '8J/3908' => $this->onWheelPress($frame),
         };
 
-        if ('3900' === $frame->getBytesString() || '3A00' === $frame->getBytesString()) {
+        if ('3900' === $frame->getDataString() || '3A00' === $frame->getDataString()) {
             $this->onWheelRelease($frame);
 
         }
