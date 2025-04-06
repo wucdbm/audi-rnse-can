@@ -18,6 +18,8 @@ COMMENT;
 
 $finder = Finder::create()->in([
     __DIR__ . '/src',
+])->append([
+    __DIR__ . '/bin/listen',
 ]);
 
 // https://cs.symfony.com/

@@ -2,6 +2,7 @@ parameters:
     level: 9
     paths:
         - src
+        - bin/listen
     excludePaths:
         - .php-cs-fixer.dist.php
     tmpDir: ./var/phpstan

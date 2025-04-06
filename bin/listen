@@ -2,6 +2,17 @@
 <?php
 
 declare(strict_types=1);
+/*
+ * Copyright (C) 2025-2025 Martin Kirilov
+ *
+ * Developed and maintained at https://github.com/wucdbm/audi-rnse-can
+ *
+ * Use as you like, as a library or as a direct solution
+ *
+ * Inspiration and documentation for the CAN codes mainly found at
+ * https://github.com/peetereczek/openauto-audi-api
+ * https://www.janssuuh.nl/en/skin-audi-rns-full-beta/
+ */
 
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Dotenv\Dotenv;
@@ -35,11 +46,10 @@ $output = new ConsoleOutput();
 
 $kodiControls = new HTTPJSONRPCKodiControls(
     $output,
-    $secure === 'true',
+    'true' === $secure,
     $ip,
     $port
 );
-
 
 $tvModeSubscriber = new KodiRNSETVModeSubscriber($output, $kodiControls);
 $rnseSubscriber = new KodiRNSESubscriber($output, $kodiControls, $tvModeSubscriber);
@@ -50,6 +60,7 @@ $mfswReader = new MFSWReader(
     $output,
     new KodiMFSWSubscriber($kodiControls),
     $carModelReader,
+    $tvModeSubscriber
 );
 $gearReader = new GearChangeReader(
     $output,
@@ -64,7 +75,7 @@ $rnseReader = new RNSEReader(
 $connection = new CanBusConnection($interface);
 
 // Initialize interface (connect to unix socket)
-if($connection->init() === false) {
+if (false === $connection->init()) {
     $output->writeln(sprintf(
         'Fatal: Could not initialize CAN "%s"',
         $interface
