@@ -1,0 +1,90 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Dotenv\Dotenv;
+use Wucdbm\AudiRnseCan\Apps\Kodi\HTTPJSONRPCKodiControls;
+use Wucdbm\AudiRnseCan\CanBusConnection;
+use Wucdbm\AudiRnseCan\CanReader;
+use Wucdbm\AudiRnseCan\Reader\CarModelReader;
+use Wucdbm\AudiRnseCan\Reader\GearChangeReader;
+use Wucdbm\AudiRnseCan\Reader\MFSWReader;
+use Wucdbm\AudiRnseCan\Reader\RNSEReader;
+use Wucdbm\AudiRnseCan\Reader\TimeReader;
+use Wucdbm\AudiRnseCan\Subscriber\Kodi\KodiMFSWSubscriber;
+use Wucdbm\AudiRnseCan\Subscriber\Kodi\KodiRNSESubscriber;
+use Wucdbm\AudiRnseCan\Subscriber\Kodi\KodiRNSETVModeSubscriber;
+use Wucdbm\AudiRnseCan\Subscriber\Null\GearChangeNullSubscriber;
+
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+$dotenv = new Dotenv();
+$envFile = dirname(__DIR__) . '/.env';
+if (file_exists($envFile)) {
+    $dotenv->load($envFile);
+}
+
+$secure = getenv('SECURE') ?: 'false';
+$ip = getenv('IP') ?: '127.0.0.1';
+$port = (int)(getenv('PORT') ?: 8080);
+$interface = getenv('INTERFACE') ?: 'can0';
+
+$output = new ConsoleOutput();
+
+$kodiControls = new HTTPJSONRPCKodiControls(
+    $output,
+    $secure === 'true',
+    $ip,
+    $port
+);
+
+
+$tvModeSubscriber = new KodiRNSETVModeSubscriber($output, $kodiControls);
+$rnseSubscriber = new KodiRNSESubscriber($output, $kodiControls, $tvModeSubscriber);
+
+$carModelReader = new CarModelReader($output);
+$timeReader = new TimeReader($output);
+$mfswReader = new MFSWReader(
+    $output,
+    new KodiMFSWSubscriber($kodiControls),
+    $carModelReader,
+);
+$gearReader = new GearChangeReader(
+    $output,
+    new GearChangeNullSubscriber()
+);
+$rnseReader = new RNSEReader(
+    $output,
+    $rnseSubscriber,
+    $tvModeSubscriber,
+);
+
+$connection = new CanBusConnection($interface);
+
+// Initialize interface (connect to unix socket)
+if($connection->init() === false) {
+    $output->writeln(sprintf(
+        'Fatal: Could not initialize CAN "%s"',
+        $interface
+    ));
+    exit(1);
+}
+
+$output->writeln(sprintf(
+    'Listening for CAN messages on interface "%s"',
+    $interface
+));
+
+$reader = new CanReader(
+    $connection,
+    [
+        $carModelReader,
+        $timeReader,
+        $mfswReader,
+        $gearReader,
+        $rnseReader,
+    ]
+);
+$reader->read();

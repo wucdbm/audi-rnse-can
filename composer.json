@@ -1,0 +1,29 @@
+{
+    "name": "wucdbm/audi-rnse-can",
+    "description": "Audi RNS-E CANBus bindings",
+    "type": "project",
+    "require": {
+        "php": ">=8.2",
+        "ext-canbus": "*",
+        "symfony/console": "7.3.x-dev",
+        "symfony/process": "7.3.x-dev",
+        "guzzlehttp/guzzle": "8.0.x-dev",
+        "symfony/dotenv": "7.3.x-dev"
+    },
+    "config": {
+        "bin-dir": "bin",
+        "optimize-autoloader": true
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Wucdbm\\AudiRnseCan\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Martin Kirilov"
+        }
+    ],
+    "minimum-stability": "dev"
+}
