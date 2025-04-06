@@ -128,10 +128,30 @@ class HTTPJSONRPCKodiControls implements KodiControls
 
     public function previous(): void
     {
+        // {"jsonrpc":"2.0","method":"Player.GoTo","params":{"playerid":1,"to":"previous"},"id":1}
+        $this->sendRPC([
+            'jsonrpc' => '2.0',
+            'method' => 'Player.GoTo',
+            'params' => [
+                'playerid' => 1,
+                'to' => 'previous',
+            ],
+            'id' => 1,
+        ]);
     }
 
     public function next(): void
     {
+        // {"jsonrpc":"2.0","method":"Player.GoTo","params":{"playerid":1,"to":"next"},"id":1}
+        $this->sendRPC([
+            'jsonrpc' => '2.0',
+            'method' => 'Player.GoTo',
+            'params' => [
+                'playerid' => 1,
+                'to' => 'next',
+            ],
+            'id' => 1,
+        ]);
     }
 
     public function setupWTF(): void
