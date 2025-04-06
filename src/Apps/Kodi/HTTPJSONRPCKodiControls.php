@@ -252,6 +252,12 @@ class HTTPJSONRPCKodiControls implements KodiControls
             JSON_THROW_ON_ERROR,
         );
 
+        $this->output->writeln(sprintf(
+            '[Kodi HTTP JSON RPC] curl -X POST -H "Content-Type: application/json" -i %s -d \'%s\'',
+            $this->url,
+            $encoded,
+        ));
+
         try {
             $response = $this->client->sendRequest(
                 new Request('POST', '', [], $encoded)
@@ -260,12 +266,6 @@ class HTTPJSONRPCKodiControls implements KodiControls
             $this->output->writeln(sprintf(
                 'HTTP JSONRPC Failed: "%s"',
                 $e->getMessage()
-            ));
-
-            $this->output->writeln(sprintf(
-                'curl -X POST -H "Content-Type: application/json" -i %s -d \'%s\'',
-                $this->url,
-                $encoded,
             ));
 
             return null;
