@@ -133,7 +133,7 @@ class HTTPJSONRPCKodiControls implements KodiControls
             'jsonrpc' => '2.0',
             'method' => 'Player.GoTo',
             'params' => [
-                'playerid' => 1,
+                'playerid' => 0,
                 'to' => 'previous',
             ],
             'id' => 1,
@@ -147,7 +147,7 @@ class HTTPJSONRPCKodiControls implements KodiControls
             'jsonrpc' => '2.0',
             'method' => 'Player.GoTo',
             'params' => [
-                'playerid' => 1,
+                'playerid' => 0,
                 'to' => 'next',
             ],
             'id' => 1,
