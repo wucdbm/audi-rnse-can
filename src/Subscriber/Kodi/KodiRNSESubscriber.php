@@ -20,13 +20,13 @@ class KodiRNSESubscriber implements RNSESubscriber
 
     public function onScrollLeft(): void
     {
-        $this->controls->up();
+        $this->controls->down();
         $this->output->writeln('KodiRNSESubscriber left');
     }
 
     public function onScrollRight(): void
     {
-        $this->controls->down();
+        $this->controls->up();
         $this->output->writeln('KodiRNSESubscriber right');
     }
 
