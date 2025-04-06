@@ -1,4 +1,15 @@
-<?php
+<?php declare(strict_types=1);
+/*
+ * Copyright (C) 2025-2025 Martin Kirilov
+ *
+ * Developed and maintained at https://github.com/wucdbm/audi-rnse-can
+ *
+ * Use as you like, as a library or as a direct solution
+ *
+ * Inspiration and documentation for the CAN codes mainly found at
+ * https://github.com/peetereczek/openauto-audi-api
+ * https://www.janssuuh.nl/en/skin-audi-rns-full-beta/
+ */
 
 namespace Wucdbm\AudiRnseCan\Reader;
 
@@ -7,7 +18,6 @@ use Wucdbm\AudiRnseCan\CanBusFrame;
 
 class MFSWReader implements Reader
 {
-
     private bool $isDetected = false;
     private int $press = 0;
 
@@ -15,8 +25,7 @@ class MFSWReader implements Reader
         private readonly OutputInterface $output,
         private readonly MFSWSubscriber $subscriber,
         private readonly CarModelReader $carModelListener,
-    )
-    {
+    ) {
     }
 
     public function read(CanBusFrame $frame): void
@@ -34,6 +43,7 @@ class MFSWReader implements Reader
 
         if (!$this->carModelListener->getModel()) {
             $this->output->writeln('MFSW Pressed, but car model not detected - abort');
+
             return;
         }
 
@@ -50,14 +60,12 @@ class MFSWReader implements Reader
             '8E/3905', '8P/390C', '8J/390C' => $this->onWheelDown($frame),
             // Scan Wheel Press
             '8E/3908', '8P/3908', '8J/3908' => $this->onWheelPress($frame),
+            default => ''
         };
 
         if ('3900' === $frame->getDataString() || '3A00' === $frame->getDataString()) {
             $this->onWheelRelease($frame);
-
         }
-
-
     }
 
     public function onWheelUp(CanBusFrame $frame): void
@@ -76,7 +84,7 @@ class MFSWReader implements Reader
 
     public function onWheelPress(CanBusFrame $frame): void
     {
-        $this->press++;
+        ++$this->press;
     }
 
     public function onWheelRelease(CanBusFrame $frame): void
@@ -100,5 +108,4 @@ class MFSWReader implements Reader
     {
         return $this->isDetected;
     }
-
 }

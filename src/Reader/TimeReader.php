@@ -1,4 +1,15 @@
-<?php
+<?php declare(strict_types=1);
+/*
+ * Copyright (C) 2025-2025 Martin Kirilov
+ *
+ * Developed and maintained at https://github.com/wucdbm/audi-rnse-can
+ *
+ * Use as you like, as a library or as a direct solution
+ *
+ * Inspiration and documentation for the CAN codes mainly found at
+ * https://github.com/peetereczek/openauto-audi-api
+ * https://www.janssuuh.nl/en/skin-audi-rns-full-beta/
+ */
 
 namespace Wucdbm\AudiRnseCan\Reader;
 
@@ -12,8 +23,7 @@ class TimeReader implements Reader
 
     public function __construct(
         private readonly OutputInterface $output,
-    )
-    {
+    ) {
     }
 
     public function read(CanBusFrame $frame): void
@@ -41,7 +51,6 @@ class TimeReader implements Reader
             $frame->substring(6, 2),
         );
 
-
         $process = new Process(['sudo', 'date', $arg]);
         $process->run();
 
@@ -56,7 +65,5 @@ class TimeReader implements Reader
                 $arg
             ));
         }
-
-
     }
 }

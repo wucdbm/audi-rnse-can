@@ -1,0 +1,11 @@
+parameters:
+    level: 9
+    paths:
+        - src
+    excludePaths:
+        - .php-cs-fixer.dist.php
+    tmpDir: ./var/phpstan
+    treatPhpDocTypesAsCertain: false
+
+rules:
+	- Ergebnis\PHPStan\Rules\Files\DeclareStrictTypesRule

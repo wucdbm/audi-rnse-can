@@ -1,4 +1,15 @@
-<?php
+<?php declare(strict_types=1);
+/*
+ * Copyright (C) 2025-2025 Martin Kirilov
+ *
+ * Developed and maintained at https://github.com/wucdbm/audi-rnse-can
+ *
+ * Use as you like, as a library or as a direct solution
+ *
+ * Inspiration and documentation for the CAN codes mainly found at
+ * https://github.com/peetereczek/openauto-audi-api
+ * https://www.janssuuh.nl/en/skin-audi-rns-full-beta/
+ */
 
 namespace Wucdbm\AudiRnseCan\Reader;
 
@@ -12,13 +23,11 @@ class CarModelReader implements Reader
 
     public function __construct(
         private readonly OutputInterface $output
-    )
-    {
+    ) {
     }
 
     public function read(CanBusFrame $frame): void
     {
-
         if (0x65F !== $frame->getId()) {
             return;
         }
@@ -39,16 +48,27 @@ class CarModelReader implements Reader
             return;
         }
 
-        $carModel = substr($frame->getDataString(), 8, 4);
-        $carYear = substr($frame->getDataString(), 14, 2);
+        $modelData = substr($frame->getDataString(), 8, 4);
+        $yearData = substr($frame->getDataString(), 14, 2);
 
-        $this->model = hex2bin($carModel);
-        $this->year = (int)hexdec($carYear) + 2000;
+        $model = hex2bin($modelData);
+
+        if (false === $model) {
+            $this->output->writeln(sprintf(
+                'CarModelListener WARNING: Could not read car model data: "%s"',
+                $frame->toString()
+            ));
+
+            return;
+        }
+
+        $this->model = $model;
+        $this->year = (int)hexdec($yearData) + 2000;
     }
 
     public function isDetected(): bool
     {
-        return $this->model !== null && $this->year !== null;
+        return null !== $this->model && null !== $this->year;
     }
 
     public function getModel(): ?string
@@ -60,5 +80,4 @@ class CarModelReader implements Reader
     {
         return $this->year;
     }
-
 }

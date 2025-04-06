@@ -1,21 +1,29 @@
-<?php
+<?php declare(strict_types=1);
+/*
+ * Copyright (C) 2025-2025 Martin Kirilov
+ *
+ * Developed and maintained at https://github.com/wucdbm/audi-rnse-can
+ *
+ * Use as you like, as a library or as a direct solution
+ *
+ * Inspiration and documentation for the CAN codes mainly found at
+ * https://github.com/peetereczek/openauto-audi-api
+ * https://www.janssuuh.nl/en/skin-audi-rns-full-beta/
+ */
 
 namespace Wucdbm\AudiRnseCan\Subscriber\Kodi;
 
 use Symfony\Component\Console\Output\OutputInterface;
-use Wucdbm\AudiRnseCan\CanBusFrame;
 use Wucdbm\AudiRnseCan\Apps\Kodi\HTTPJSONRPCKodiControls;
 use Wucdbm\AudiRnseCan\Reader\RNSESubscriber;
 
 class KodiRNSESubscriber implements RNSESubscriber
 {
-
     public function __construct(
         private readonly OutputInterface $output,
         private readonly HTTPJSONRPCKodiControls $controls,
         private readonly KodiRNSETVModeSubscriber $tvSubscriber,
-    )
-    {
+    ) {
     }
 
     public function onScrollLeft(): void
@@ -127,7 +135,7 @@ class KodiRNSESubscriber implements RNSESubscriber
 
     public function onPreviousHold(int $times): void
     {
-//        todo left seek
+        //        todo left seek
         // 				elif msg == ("37 30 01 00 40 01"): #Left
         //					windowid = xbmcgui.getCurrentWindowId()
         //					if (windowid == 12006): # MusicVisualisation.xml of VideoFullScreen.xml
@@ -164,5 +172,4 @@ class KodiRNSESubscriber implements RNSESubscriber
     {
         return $this->tvSubscriber->isTvModeActive();
     }
-
 }

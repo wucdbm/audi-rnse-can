@@ -1,4 +1,15 @@
-<?php
+<?php declare(strict_types=1);
+/*
+ * Copyright (C) 2025-2025 Martin Kirilov
+ *
+ * Developed and maintained at https://github.com/wucdbm/audi-rnse-can
+ *
+ * Use as you like, as a library or as a direct solution
+ *
+ * Inspiration and documentation for the CAN codes mainly found at
+ * https://github.com/peetereczek/openauto-audi-api
+ * https://www.janssuuh.nl/en/skin-audi-rns-full-beta/
+ */
 
 namespace Wucdbm\AudiRnseCan\Reader;
 
@@ -7,7 +18,6 @@ use Wucdbm\AudiRnseCan\CanBusFrame;
 
 class RNSEReader implements Reader
 {
-
     private RNSEButton $up;
     private RNSEButton $down;
     private RNSEButton $wheel;
@@ -21,8 +31,7 @@ class RNSEReader implements Reader
         private readonly RNSESubscriber $subscriber,
         private readonly RNSETVModeSubscriber $tvSubscriber,
         private readonly RNSEButtonThresholds $thresholds = new RNSEButtonThresholds()
-    )
-    {
+    ) {
         $this->up = $this->thresholds->createUpButton(
             $this->subscriber->onUpShort(...),
             $this->subscriber->onUpHold(...),
@@ -65,6 +74,7 @@ class RNSEReader implements Reader
         match ($frame->getId()) {
             0x661 => $this->onTvMode($frame),
             0x461 => $this->onKeyPress($frame),
+            default => ''
         };
     }
 
@@ -96,7 +106,6 @@ class RNSEReader implements Reader
 
     private function onKeyPress(CanBusFrame $frame): void
     {
-
         $this->output->writeln(sprintf(
             'MFSWListener read "%s"',
             $frame->toString()
@@ -119,8 +128,7 @@ class RNSEReader implements Reader
             '373004010000' => $this->previous->release(),
             '373001000100' => $this->setup->press(),
             '373004000100' => $this->setup->release(),
+            default => ''
         };
     }
-
-
 }

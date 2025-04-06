@@ -1,4 +1,15 @@
-<?php
+<?php declare(strict_types=1);
+/*
+ * Copyright (C) 2025-2025 Martin Kirilov
+ *
+ * Developed and maintained at https://github.com/wucdbm/audi-rnse-can
+ *
+ * Use as you like, as a library or as a direct solution
+ *
+ * Inspiration and documentation for the CAN codes mainly found at
+ * https://github.com/peetereczek/openauto-audi-api
+ * https://www.janssuuh.nl/en/skin-audi-rns-full-beta/
+ */
 
 namespace Wucdbm\AudiRnseCan\Reader;
 
@@ -10,8 +21,7 @@ readonly class GearChangeReader implements Reader
     public function __construct(
         private OutputInterface $output,
         private GearChangeSubscriber $subscriber,
-    )
-    {
+    ) {
     }
 
     public function read(CanBusFrame $frame): void
@@ -30,6 +40,7 @@ readonly class GearChangeReader implements Reader
         match ($msg) {
             '00' => $this->onForwardGear($frame),
             '02' => $this->onReverseGear($frame),
+            default => ''
         };
     }
 
@@ -44,5 +55,4 @@ readonly class GearChangeReader implements Reader
         $this->subscriber->onReverseGear($frame);
         $this->output->writeln('GearChangeListener Reverse Gear Engaged');
     }
-
 }
