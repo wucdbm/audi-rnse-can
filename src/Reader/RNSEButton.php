@@ -39,6 +39,10 @@ class RNSEButton
 
     public function release(): void
     {
+        if (0 === $this->state) {
+            return;
+        }
+
         $short = $this->short;
         $long = $this->long;
 
