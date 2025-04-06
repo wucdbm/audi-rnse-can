@@ -45,12 +45,22 @@ readonly class KodiRNSESubscriber implements RNSESubscriber
 
     public function onUpHold(int $times): void
     {
+        $volume = $this->controls->volumeUp();
+
+        if ($volume) {
+            $this->output->writeln(sprintf(
+                'KodiRNSESubscriber volume up to %d%%',
+                $volume->getVolume(),
+            ));
+        } else {
+            $this->output->writeln('KodiRNSESubscriber failed to increase volume');
+        }
     }
 
     public function onUpLong(): void
     {
-        $this->controls->left();
-        $this->output->writeln('KodiRNSESubscriber up long');
+        //        $this->controls->left();
+        //        $this->output->writeln('KodiRNSESubscriber up long');
     }
 
     public function onDownShort(): void
@@ -61,12 +71,22 @@ readonly class KodiRNSESubscriber implements RNSESubscriber
 
     public function onDownHold(int $times): void
     {
+        $volume = $this->controls->volumeDown();
+
+        if ($volume) {
+            $this->output->writeln(sprintf(
+                'KodiRNSESubscriber volume down to %d%%',
+                $volume->getVolume(),
+            ));
+        } else {
+            $this->output->writeln('KodiRNSESubscriber failed to decrease volume');
+        }
     }
 
     public function onDownLong(): void
     {
-        $this->controls->right();
-        $this->output->writeln('KodiRNSESubscriber down long');
+        //        $this->controls->right();
+        //        $this->output->writeln('KodiRNSESubscriber down long');
     }
 
     public function onWheelShort(): void

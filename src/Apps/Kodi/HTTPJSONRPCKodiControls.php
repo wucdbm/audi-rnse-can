@@ -235,8 +235,44 @@ class HTTPJSONRPCKodiControls implements KodiControls
         return null;
     }
 
-    public function setupWTF(): void
+    public function volumeUp(): ?VolumeResult
     {
+        // {"jsonrpc":"2.0","method":"Application.SetVolume","id":1,"params":{"volume":"increment"}}
+        $data = $this->sendRPC([
+            'jsonrpc' => '2.0',
+            'method' => 'Application.SetVolume',
+            'params' => [
+                'volume' => 'increment',
+            ],
+            'id' => 1,
+        ]);
+
+        if (null !== $data) {
+            // @phpstan-ignore-next-line
+            return new VolumeResult($data);
+        }
+
+        return null;
+    }
+
+    public function volumeDown(): ?VolumeResult
+    {
+        // {"jsonrpc":"2.0","method":"Application.SetVolume","id":1,"params":{"volume":"increment"}}
+        $data = $this->sendRPC([
+            'jsonrpc' => '2.0',
+            'method' => 'Application.SetVolume',
+            'params' => [
+                'volume' => 'decrement',
+            ],
+            'id' => 1,
+        ]);
+
+        if (null !== $data) {
+            // @phpstan-ignore-next-line
+            return new VolumeResult($data);
+        }
+
+        return null;
     }
 
     /**

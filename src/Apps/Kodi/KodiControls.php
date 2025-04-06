@@ -37,5 +37,7 @@ interface KodiControls
 
     public function next(): void;
 
-    public function setupWTF(): void;
+    public function volumeUp(): ?VolumeResult;
+
+    public function volumeDown(): ?VolumeResult;
 }
