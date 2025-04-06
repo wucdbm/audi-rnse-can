@@ -17,12 +17,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Wucdbm\AudiRnseCan\Apps\Kodi\HTTPJSONRPCKodiControls;
 use Wucdbm\AudiRnseCan\Reader\RNSESubscriber;
 
-class KodiRNSESubscriber implements RNSESubscriber
+readonly class KodiRNSESubscriber implements RNSESubscriber
 {
     public function __construct(
-        private readonly OutputInterface $output,
-        private readonly HTTPJSONRPCKodiControls $controls,
-        private readonly KodiRNSETVModeSubscriber $tvSubscriber,
+        private OutputInterface $output,
+        private HTTPJSONRPCKodiControls $controls,
+        private KodiRNSETVModeSubscriber $tvSubscriber,
     ) {
     }
 
@@ -110,21 +110,23 @@ class KodiRNSESubscriber implements RNSESubscriber
 
     public function onNextHold(int $times): void
     {
-        // todo right seek
-        // 				elif msg == ("37 30 01 00 20 01"): #Right
-        //					windowid = xbmcgui.getCurrentWindowId()
-        //					if (windowid == 12006): # MusicVisualisation.xml of VideoFullScreen.xml
-        //						xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Player.Seek","params":{"playerid":0,"value":"smallforward"},"id":1}')
-        //					elif (windowid == 12005):
-        //						xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Player.Seek","params":{"playerid":1,"value":"smallforward"},"id":1}')
-        //					else:
-        //						xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Input.Right","id":1}')
+        $seek = $this->controls->seekForward();
+
+        if ($seek) {
+            $this->output->writeln(sprintf(
+                'KodiRNSESubscriber seek forward to %s of %s',
+                $seek->getTime(),
+                $seek->getTotalTime(),
+            ));
+        } else {
+            $this->output->writeln('KodiRNSESubscriber failed to seek forward');
+        }
     }
 
     public function onNextLong(): void
     {
-        $this->controls->next();
-        $this->output->writeln('KodiRNSESubscriber next long');
+        //        $this->controls->next();
+        //        $this->output->writeln('KodiRNSESubscriber next long');
     }
 
     public function onPreviousShort(): void
@@ -135,21 +137,23 @@ class KodiRNSESubscriber implements RNSESubscriber
 
     public function onPreviousHold(int $times): void
     {
-        //        todo left seek
-        // 				elif msg == ("37 30 01 00 40 01"): #Left
-        //					windowid = xbmcgui.getCurrentWindowId()
-        //					if (windowid == 12006): # MusicVisualisation.xml of VideoFullScreen.xml
-        //						xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Player.Seek","params":{"playerid":0,"value":"smallbackward"},"id":1}')
-        //					elif (windowid == 12005):
-        //						xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Player.Seek","params":{"playerid":1,"value":"smallbackward"},"id":1}')
-        //					else:
-        //							xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Input.Left","id":1}')
+        $seek = $this->controls->seekBackward();
+
+        if ($seek) {
+            $this->output->writeln(sprintf(
+                'KodiRNSESubscriber seek backward to %s of %s',
+                $seek->getTime(),
+                $seek->getTotalTime(),
+            ));
+        } else {
+            $this->output->writeln('KodiRNSESubscriber failed to seek backward');
+        }
     }
 
     public function onPreviousLong(): void
     {
-        $this->controls->previous();
-        $this->output->writeln('KodiRNSESubscriber previous long');
+        //        $this->controls->previous();
+        //        $this->output->writeln('KodiRNSESubscriber previous long');
     }
 
     public function onSetupShort(): void

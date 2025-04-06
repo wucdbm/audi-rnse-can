@@ -154,11 +154,51 @@ class HTTPJSONRPCKodiControls implements KodiControls
         ]);
     }
 
+    public function seekBackward(): ?SeekResult
+    {
+        return $this->seek('smallbackward');
+    }
+
+    public function seekForward(): ?SeekResult
+    {
+        // '{"jsonrpc":"2.0","method":"Player.Seek","params":{"playerid":0,"value":{"step":"smallforward"}},"id":1}'
+        return $this->seek('smallforward');
+    }
+
+    private function seek(string $type): ?SeekResult
+    {
+        // '{"jsonrpc":"2.0","method":"Player.Seek","params":{"playerid":0,"value":{"step":"smallforward"}},"id":1}'
+        $data = $this->sendRPC([
+            'jsonrpc' => '2.0',
+            'method' => 'Player.Seek',
+            'params' => [
+                'playerid' => 0,
+                'value' => [
+                    'step' => $type,
+                ],
+            ],
+            'id' => 1,
+        ]);
+
+        if (null !== $data) {
+            // @phpstan-ignore-next-line
+            return new SeekResult($data);
+        }
+
+        return null;
+    }
+
     public function setupWTF(): void
     {
     }
 
-    private function sendRPC(mixed $payload): void
+    /**
+     * @return array<mixed, mixed>|null
+     *
+     * @throws \JsonException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
+    private function sendRPC(mixed $payload): ?array
     {
         $response = $this->client->sendRequest(
             new Request('POST', '', [], json_encode(
@@ -170,11 +210,19 @@ class HTTPJSONRPCKodiControls implements KodiControls
         $contents = $response->getBody()->getContents();
         $decoded = json_decode($contents, true, JSON_THROW_ON_ERROR);
 
-        if (is_array($decoded) && isset($decoded['error'])) {
-            $this->output->writeln(sprintf(
-                'Kodi JSONRPC Error: "%s"',
-                $contents
-            ));
+        if (is_array($decoded)) {
+            if (isset($decoded['error'])) {
+                $this->output->writeln(sprintf(
+                    'Kodi JSONRPC Error: "%s"',
+                    $contents
+                ));
+
+                return null;
+            }
+
+            return $decoded;
         }
+
+        return null;
     }
 }
