@@ -40,4 +40,8 @@ interface KodiControls
     public function volumeUp(): ?VolumeResult;
 
     public function volumeDown(): ?VolumeResult;
+
+    public function seekBackward(): ?SeekResult;
+
+    public function seekForward(): ?SeekResult;
 }

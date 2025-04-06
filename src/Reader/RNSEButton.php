@@ -16,25 +16,12 @@ namespace Wucdbm\AudiRnseCan\Reader;
 class RNSEButton
 {
     private int $state = 0;
-
-    /** @var callable */
-    private $short;
-
-    /** @var callable */
-    private $hold;
-
-    /** @var callable */
-    private $long;
+    private bool $isReactingToHold = false;
 
     public function __construct(
-        callable $short,
-        callable $hold,
-        callable $long,
+        private readonly RNSEButtonAction $action,
         private readonly int $longThreshold,
     ) {
-        $this->short = $short;
-        $this->hold = $hold;
-        $this->long = $long;
     }
 
     public function press(): void
@@ -42,8 +29,7 @@ class RNSEButton
         ++$this->state;
 
         if ($this->state >= 2) {
-            $hold = $this->hold;
-            $hold($this->state);
+            $this->isReactingToHold = $this->action->hold($this->state);
         }
     }
 
@@ -53,13 +39,16 @@ class RNSEButton
             return;
         }
 
-        $short = $this->short;
-        $long = $this->long;
+        if ($this->isReactingToHold) {
+            $this->state = 0;
+
+            return;
+        }
 
         if ($this->state >= $this->longThreshold) {
-            $long();
+            $this->action->long();
         } else {
-            $short();
+            $this->action->short();
         }
 
         $this->state = 0;
