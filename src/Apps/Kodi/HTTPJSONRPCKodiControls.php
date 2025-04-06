@@ -14,6 +14,7 @@
 namespace Wucdbm\AudiRnseCan\Apps\Kodi;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,6 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class HTTPJSONRPCKodiControls implements KodiControls
 {
     private Client $client;
+    private string $url;
 
     public function __construct(
         private OutputInterface $output,
@@ -28,7 +30,7 @@ class HTTPJSONRPCKodiControls implements KodiControls
         private readonly string $ip,
         private readonly int $port,
     ) {
-        $url = sprintf(
+        $this->url = sprintf(
             '%s://%s:%s/jsonrpc',
             $this->secure ? 'https' : 'http',
             $this->ip,
@@ -37,7 +39,7 @@ class HTTPJSONRPCKodiControls implements KodiControls
 
         $this->output->writeln(sprintf(
             'Kodi controls initialized at HTTP JSON RPC "%s"',
-            $url
+            $this->url
         ));
 
         $this->client = new Client([
@@ -46,7 +48,7 @@ class HTTPJSONRPCKodiControls implements KodiControls
             ],
             RequestOptions::CONNECT_TIMEOUT => 0.01,
             RequestOptions::TIMEOUT => 0.015,
-            'base_uri' => $url,
+            'base_uri' => $this->url,
         ]);
     }
 
@@ -245,12 +247,29 @@ class HTTPJSONRPCKodiControls implements KodiControls
      */
     private function sendRPC(mixed $payload): ?array
     {
-        $response = $this->client->sendRequest(
-            new Request('POST', '', [], json_encode(
-                $payload,
-                JSON_THROW_ON_ERROR,
-            ))
+        $encoded = json_encode(
+            $payload,
+            JSON_THROW_ON_ERROR,
         );
+
+        try {
+            $response = $this->client->sendRequest(
+                new Request('POST', '', [], $encoded)
+            );
+        } catch (ConnectException $e) {
+            $this->output->writeln(sprintf(
+                'HTTP JSONRPC Failed: "%s"',
+                $e->getMessage()
+            ));
+
+            $this->output->writeln(sprintf(
+                'curl -X POST -H "Content-Type: application/json" -i %s -d \'%s\'',
+                $this->url,
+                $encoded,
+            ));
+
+            return null;
+        }
 
         $contents = $response->getBody()->getContents();
         $decoded = json_decode($contents, true, JSON_THROW_ON_ERROR);
