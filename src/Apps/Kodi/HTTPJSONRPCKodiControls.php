@@ -110,10 +110,53 @@ class HTTPJSONRPCKodiControls implements KodiControls
 
     public function play(): void
     {
+        $isPlaying = $this->isPlaying();
+
+        if ($isPlaying) {
+            return;
+        }
+
+        $this->playPause();
     }
 
     public function pause(): void
     {
+        $isPlaying = $this->isPlaying();
+
+        if (!$isPlaying) {
+            return;
+        }
+
+        $this->playPause();
+    }
+
+    private function isPlaying(): ?bool
+    {
+        // '{"jsonrpc":"2.0","method":"Player.GetProperties",
+        // "params":{"playerid":0, "properties":["speed"]},"id":1}'
+        $data = $this->sendRPC([
+            'jsonrpc' => '2.0',
+            'method' => 'Player.GetProperties',
+            'params' => [
+                'playerid' => 0,
+                'properties' => [
+                    'speed',
+                ],
+            ],
+            'id' => 1,
+        ]);
+
+        // {"id":1,"jsonrpc":"2.0","result":{"speed":1}}
+
+        // @phpstan-ignore-next-line
+        if (isset($data['result']['speed'])) {
+            // @phpstan-ignore-next-line
+            $speed = (int)$data['result']['speed'];
+
+            return $speed > 0;
+        }
+
+        return null;
     }
 
     public function playPause(): void
