@@ -42,7 +42,7 @@ class RNSEButton
         $short = $this->short;
         $long = $this->long;
 
-        if ($this->state <= $this->longThreshold) {
+        if ($this->state >= $this->longThreshold) {
             $long();
         } else {
             $short();
