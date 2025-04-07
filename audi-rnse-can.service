@@ -1,0 +1,14 @@
+[Unit]
+Description=audi-rnse-can Service
+After=multi-user.target
+
+[Service]
+Type=idle
+User=pi
+StandardOutput=append:/home/pi/audi-rnse-can-out.log
+StandardError=append:/home/pi/audi-rnse-can-err.log
+ExecStart=/usr/bin/php /home/pi/audi-rnse-can/bin/listen
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

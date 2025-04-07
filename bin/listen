@@ -46,10 +46,10 @@ $interface = getenv('INTERFACE') ?: 'can0';
 $output = new ConsoleOutput();
 
 $kodiControls = new HTTPJSONRPCKodiControls(
-        $output,
-        'true' === $secure,
-        $ip,
-        $port
+    $output,
+    'true' === $secure,
+    $ip,
+    $port
 );
 
 $tvModeSubscriber = new KodiRNSETVModeSubscriber($output, $kodiControls);
@@ -58,19 +58,19 @@ $buttons = KodiRNSEButtonsFactory::create($output, $kodiControls);
 $carModelReader = new CarModelReader($output);
 $timeReader = new TimeReader($output);
 $mfswReader = new MFSWReader(
-        $output,
-        new KodiMFSWSubscriber($kodiControls),
-        $carModelReader,
-        $tvModeSubscriber
+    $output,
+    new KodiMFSWSubscriber($kodiControls),
+    $carModelReader,
+    $tvModeSubscriber
 );
 $gearReader = new GearChangeReader(
-        $output,
-        new GearChangeNullSubscriber()
+    $output,
+    new GearChangeNullSubscriber()
 );
 $rnseReader = new RNSEReader(
-        $output,
-        $buttons,
-        $tvModeSubscriber,
+    $output,
+    $buttons,
+    $tvModeSubscriber,
 );
 
 $connection = new CanBusConnection($interface);
@@ -78,25 +78,25 @@ $connection = new CanBusConnection($interface);
 // Initialize interface (connect to unix socket)
 if (false === $connection->init()) {
     $output->writeln(sprintf(
-            'Fatal: Could not initialize CAN "%s"',
-            $interface
+        'Fatal: Could not initialize CAN "%s"',
+        $interface
     ));
     exit(1);
 }
 
 $output->writeln(sprintf(
-        'Listening for CAN messages on interface "%s"',
-        $interface
+    'Listening for CAN messages on interface "%s"',
+    $interface
 ));
 
 $reader = new CanReader(
-        $connection,
-        [
-                $carModelReader,
-                $timeReader,
-                $mfswReader,
-                $gearReader,
-                $rnseReader,
-        ]
+    $connection,
+    [
+        $carModelReader,
+        $timeReader,
+        $mfswReader,
+        $gearReader,
+        $rnseReader,
+    ]
 );
 $reader->read();
