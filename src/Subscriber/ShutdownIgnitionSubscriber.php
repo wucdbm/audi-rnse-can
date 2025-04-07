@@ -31,7 +31,7 @@ readonly class ShutdownIgnitionSubscriber implements IgnitionSubscriber
 
     public function onKeyOut(CanBusFrame $frame): void
     {
-        $process = new Process(['sudo', 'shutdown', '-h now']);
+        $process = new Process(['sudo', 'poweroff']);
         $process->run();
 
         if (!$process->isSuccessful()) {
