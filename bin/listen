@@ -23,6 +23,7 @@ use Wucdbm\AudiRnseCan\CanReader;
 use Wucdbm\AudiRnseCan\Reader\CarModelContainer;
 use Wucdbm\AudiRnseCan\Reader\CarModelReader;
 use Wucdbm\AudiRnseCan\Reader\GearChangeReader;
+use Wucdbm\AudiRnseCan\Reader\IgnitionReaderA6C5;
 use Wucdbm\AudiRnseCan\Reader\MFSWReader;
 use Wucdbm\AudiRnseCan\Reader\RNSEReader;
 use Wucdbm\AudiRnseCan\Reader\TimeReader;
@@ -30,6 +31,7 @@ use Wucdbm\AudiRnseCan\Subscriber\Kodi\KodiMFSWSubscriber;
 use Wucdbm\AudiRnseCan\Subscriber\Kodi\KodiRNSEButtonsFactory;
 use Wucdbm\AudiRnseCan\Subscriber\Kodi\KodiRNSETVModeSubscriber;
 use Wucdbm\AudiRnseCan\Subscriber\Null\GearChangeNullSubscriber;
+use Wucdbm\AudiRnseCan\Subscriber\ShutdownIgnitionSubscriber;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
@@ -75,6 +77,9 @@ $rnseReader = new RNSEReader(
     $tvModeSubscriber,
 );
 
+$shutdownSubscriber = new ShutdownIgnitionSubscriber($output);
+$ignitionReader = new IgnitionReaderA6C5($output, $shutdownSubscriber);
+
 $connection = new CanBusConnection($interface);
 
 // Initialize interface (connect to unix socket)
@@ -97,6 +102,7 @@ $reader = new CanReader(
         //        $carModelReader,
         $timeReader,
         $mfswReader,
+        $ignitionReader,
         //        $gearReader,
         $rnseReader,
     ]
