@@ -20,6 +20,7 @@ use Symfony\Component\Dotenv\Dotenv;
 use Wucdbm\AudiRnseCan\Apps\Kodi\HTTPJSONRPCKodiControls;
 use Wucdbm\AudiRnseCan\CanBusConnection;
 use Wucdbm\AudiRnseCan\CanReader;
+use Wucdbm\AudiRnseCan\Reader\CarModelContainer;
 use Wucdbm\AudiRnseCan\Reader\CarModelReader;
 use Wucdbm\AudiRnseCan\Reader\GearChangeReader;
 use Wucdbm\AudiRnseCan\Reader\MFSWReader;
@@ -55,18 +56,19 @@ $kodiControls = new HTTPJSONRPCKodiControls(
 $tvModeSubscriber = new KodiRNSETVModeSubscriber($output, $kodiControls);
 $buttons = KodiRNSEButtonsFactory::create($output, $kodiControls);
 
-$carModelReader = new CarModelReader($output);
+$carModelContainer = new CarModelContainer('8P', 2011);
+// $carModelReader = new CarModelReader($output, $carModelContainer);
 $timeReader = new TimeReader($output);
 $mfswReader = new MFSWReader(
     $output,
     new KodiMFSWSubscriber($kodiControls),
-    $carModelReader,
+    $carModelContainer,
     $tvModeSubscriber
 );
-//$gearReader = new GearChangeReader(
+// $gearReader = new GearChangeReader(
 //    $output,
 //    new GearChangeNullSubscriber()
-//);
+// );
 $rnseReader = new RNSEReader(
     $output,
     $buttons,
@@ -92,10 +94,10 @@ $output->writeln(sprintf(
 $reader = new CanReader(
     $connection,
     [
-        $carModelReader,
+        //        $carModelReader,
         $timeReader,
         $mfswReader,
-//        $gearReader,
+        //        $gearReader,
         $rnseReader,
     ]
 );

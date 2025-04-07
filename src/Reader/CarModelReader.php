@@ -18,11 +18,9 @@ use Wucdbm\AudiRnseCan\CanBusFrame;
 
 class CarModelReader implements Reader
 {
-    private ?string $model = null;
-    private ?int $year = null;
-
     public function __construct(
-        private readonly OutputInterface $output
+        private readonly OutputInterface $output,
+        private readonly CarModelContainer $container,
     ) {
     }
 
@@ -62,22 +60,12 @@ class CarModelReader implements Reader
             return;
         }
 
-        $this->model = $model;
-        $this->year = (int)hexdec($yearData) + 2000;
+        $this->container->setModel($model);
+        $this->container->setYear((int)hexdec($yearData) + 2000);
     }
 
     public function isDetected(): bool
     {
-        return null !== $this->model && null !== $this->year;
-    }
-
-    public function getModel(): ?string
-    {
-        return $this->model;
-    }
-
-    public function getYear(): ?int
-    {
-        return $this->year;
+        return null !== $this->container->getModel() && null !== $this->container->getYear();
     }
 }

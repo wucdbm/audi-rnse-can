@@ -24,7 +24,7 @@ class MFSWReader implements Reader
     public function __construct(
         private readonly OutputInterface $output,
         private readonly MFSWSubscriber $subscriber,
-        private readonly CarModelReader $carModelListener,
+        private readonly CarModelContainer $carModelContainer,
         private readonly RNSETVModeSubscriber $tvSubscriber,
     ) {
     }
@@ -42,7 +42,7 @@ class MFSWReader implements Reader
 
         $this->isDetected = true;
 
-        if (!$this->carModelListener->getModel()) {
+        if (!$this->carModelContainer->getModel()) {
             $this->output->writeln('MFSW Pressed, but car model not detected - abort');
 
             return;
@@ -50,7 +50,7 @@ class MFSWReader implements Reader
 
         $type = sprintf(
             '%s/%s',
-            $this->carModelListener->getModel(),
+            $this->carModelContainer->getModel(),
             $frame->getDataString(),
         );
 
