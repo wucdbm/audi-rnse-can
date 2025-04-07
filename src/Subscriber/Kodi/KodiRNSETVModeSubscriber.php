@@ -30,16 +30,25 @@ class KodiRNSETVModeSubscriber implements RNSETVModeSubscriber
 
     public function onTvModeActive(CanBusFrame $frame): void
     {
-        $this->tvModeActive = true;
+        if ($this->tvModeActive) {
+            return;
+        }
+
         $this->controls->play();
         $this->output->writeln('KodiRNSETVModeSubscriber play');
+
+        $this->tvModeActive = true;
     }
 
     public function onTvModeInactive(CanBusFrame $frame): void
     {
-        $this->tvModeActive = false;
+        if (!$this->tvModeActive) {
+            return;
+        }
+
         $this->controls->pause();
         $this->output->writeln('KodiRNSETVModeSubscriber pause');
+        $this->tvModeActive = false;
     }
 
     public function isTvModeActive(): bool
