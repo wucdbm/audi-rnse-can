@@ -64,6 +64,8 @@ class MFSWReader implements Reader
             default => ''
         };
 
+        // 3900 is MFSW idle according to janssuuh.nl
+        // "Passive state Multifunction steering wheel"
         if ('3900' === $frame->getDataString() || '3A00' === $frame->getDataString()) {
             $this->onWheelRelease($frame);
         }

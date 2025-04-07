@@ -37,6 +37,10 @@ readonly class IgnitionReaderA6C5 implements Reader
 
         $firstByte = $frame->byte(0);
 
+        if (0x03 === $firstByte) {
+            $this->subscriber->onIgnitionOn($frame);
+        }
+
         if (0x01 === $firstByte) {
             $this->subscriber->onIgnitionOff($frame);
         }

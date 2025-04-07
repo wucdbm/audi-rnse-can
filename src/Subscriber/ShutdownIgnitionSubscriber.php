@@ -18,19 +18,34 @@ use Symfony\Component\Process\Process;
 use Wucdbm\AudiRnseCan\CanBusFrame;
 use Wucdbm\AudiRnseCan\Reader\IgnitionSubscriber;
 
-readonly class ShutdownIgnitionSubscriber implements IgnitionSubscriber
+class ShutdownIgnitionSubscriber implements IgnitionSubscriber
 {
+    private ?bool $ignitionOn = null;
+
     public function __construct(
-        private OutputInterface $output
+        private readonly OutputInterface $output
     ) {
+    }
+
+    public function onIgnitionOn(CanBusFrame $frame): void
+    {
+        $this->ignitionOn = true;
     }
 
     public function onIgnitionOff(CanBusFrame $frame): void
     {
+        $this->ignitionOn = false;
     }
 
     public function onKeyOut(CanBusFrame $frame): void
     {
+        if (null === $this->ignitionOn) {
+            $this->output->writeln(
+                'ShutdownIgnitionSubscriber: Ignition is off, but will not shut down because the previous ignition state is unknown',
+            );
+
+            return;
+        }
         $process = new Process(['sudo', 'poweroff']);
         $process->run();
 

@@ -39,10 +39,10 @@ readonly class IgnitionReader implements Reader
 
         if (0x11 === $firstByte) {
             $this->subscriber->onIgnitionOff($frame);
-        }
-
-        if (0x10 === $firstByte) {
+        } elseif (0x10 === $firstByte) {
             $this->subscriber->onKeyOut($frame);
+        } else {
+            $this->subscriber->onIgnitionOn($frame);
         }
     }
 }
