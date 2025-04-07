@@ -63,10 +63,10 @@ $mfswReader = new MFSWReader(
     $carModelReader,
     $tvModeSubscriber
 );
-$gearReader = new GearChangeReader(
-    $output,
-    new GearChangeNullSubscriber()
-);
+//$gearReader = new GearChangeReader(
+//    $output,
+//    new GearChangeNullSubscriber()
+//);
 $rnseReader = new RNSEReader(
     $output,
     $buttons,
@@ -95,7 +95,7 @@ $reader = new CanReader(
         $carModelReader,
         $timeReader,
         $mfswReader,
-        $gearReader,
+//        $gearReader,
         $rnseReader,
     ]
 );
