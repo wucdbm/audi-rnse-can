@@ -43,6 +43,8 @@ grumphp:
             jobs: ~
             triggered_by: [ 'php' ]
         phpparser:
+            ignore_patterns:
+                - 'php-canbus'
             kind: php7
             visitors:
                 declare_strict_types: ~

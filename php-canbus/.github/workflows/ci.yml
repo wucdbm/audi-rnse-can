@@ -1,0 +1,46 @@
+name: Build and Test
+on: [ push, pull_request ]
+jobs:
+
+  build-job:
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-22.04
+
+    strategy:
+      matrix:
+        php: [ '8.0', '8.1', '8.2' ]
+
+    steps:
+      - name: OS - Install linux-can/can-utils
+        run: sudo apt install -y can-utils
+
+      - name: OS - Install extra modules (vcan)
+        run: sudo apt-get install -y linux-modules-extra-$(uname -r)
+
+      - name: OS - Load extra modules (vcan)
+        run: sudo modprobe vcan
+
+
+      - name: Git - Checkout
+        uses: actions/checkout@v2
+
+
+      - name: PHP - Setup
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          ini-values: error_reporting=-1, display_errors=On
+          tools: none
+
+
+      - name: Extension - PHPize
+        run: phpize
+
+      - name: Extension - Configure
+        run: ./configure --enable-canbus
+
+      - name: Extension - Make
+        run: make
+
+      - name: Extension - Test
+        run: env NO_INTERACTION=1 make test

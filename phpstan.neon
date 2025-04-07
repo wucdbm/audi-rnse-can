@@ -5,6 +5,7 @@ parameters:
         - bin/listen
     excludePaths:
         - .php-cs-fixer.dist.php
+        - php-canbus
     tmpDir: ./var/phpstan
     treatPhpDocTypesAsCertain: false
 
