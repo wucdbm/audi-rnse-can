@@ -60,13 +60,13 @@ $buttons = KodiRNSEButtonsFactory::create($output, $kodiControls);
 
 $carModelContainer = new CarModelContainer('4B', 2003);
 // $carModelReader = new CarModelReader($output, $carModelContainer);
-$timeReader = new TimeReader($output);
-$mfswReader = new MFSWReader(
-    $output,
-    new KodiMFSWSubscriber($kodiControls),
-    $carModelContainer,
-    $tvModeSubscriber
-);
+// $timeReader = new TimeReader($output);
+// $mfswReader = new MFSWReader(
+//    $output,
+//    new KodiMFSWSubscriber($kodiControls),
+//    $carModelContainer,
+//    $tvModeSubscriber
+// );
 // $gearReader = new GearChangeReader(
 //    $output,
 //    new GearChangeNullSubscriber()
@@ -100,8 +100,8 @@ $reader = new CanReader(
     $connection,
     [
         //        $carModelReader,
-        $timeReader,
-        $mfswReader,
+        //        $timeReader,
+        //        $mfswReader,
         //        $ignitionReader,
         //        $gearReader,
         $rnseReader,
