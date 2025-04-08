@@ -30,6 +30,12 @@ class RNSEButton
     {
         ++$this->state;
 
+        echo sprintf(
+            "\n\nButton Press State: %d | %d\n\n",
+            $this->state,
+            floor($this->state / self::SENSITIVITY),
+        );
+
         if ($this->state >= 2) {
             $this->isReactingToHold = $this->action->hold($this->state);
         }
@@ -48,6 +54,11 @@ class RNSEButton
         }
 
         $actualState = floor($this->state / self::SENSITIVITY);
+
+        echo sprintf(
+            "\n\nButton Release Actual State: %d\n\n",
+            $actualState,
+        );
 
         if ($actualState >= $this->longThreshold) {
             $this->action->long();
