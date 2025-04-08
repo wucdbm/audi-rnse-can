@@ -15,6 +15,8 @@ namespace Wucdbm\AudiRnseCan\Reader;
 
 class RNSEButton
 {
+    public const SENSITIVITY = 4;
+
     private int $state = 0;
     private bool $isReactingToHold = false;
 
@@ -40,17 +42,25 @@ class RNSEButton
         }
 
         if ($this->isReactingToHold) {
-            $this->state = 0;
+            $this->reset();
 
             return;
         }
 
-        if ($this->state >= $this->longThreshold) {
+        $actualState = floor($this->state / self::SENSITIVITY);
+
+        if ($actualState >= $this->longThreshold) {
             $this->action->long();
         } else {
             $this->action->short();
         }
 
+        $this->reset();
+    }
+
+    private function reset(): void
+    {
         $this->state = 0;
+        $this->isReactingToHold = false;
     }
 }
