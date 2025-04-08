@@ -171,17 +171,23 @@ class MFSWReader implements Reader
             return;
         }
 
-        if (1 === $this->up) {
-            // A6 C5 handling of buttons
-            $this->subscriber->onWheelUp($frame);
+        if ($this->up > 0) {
+            if (1 === $this->up) {
+                // A6 C5 handling of buttons
+                $this->subscriber->onWheelUp($frame);
+            }
+
             $this->resetState();
 
             return;
         }
 
-        if (1 === $this->down) {
-            // A6 C5 handling of buttons
-            $this->subscriber->onWheelDown($frame);
+        if ($this->down > 0) {
+            if (1 === $this->down) {
+                // A6 C5 handling of buttons
+                $this->subscriber->onWheelDown($frame);
+            }
+
             $this->resetState();
 
             return;
