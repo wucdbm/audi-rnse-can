@@ -62,8 +62,18 @@ class RNSEButton
 
         if ($actualState >= $this->longThreshold) {
             $this->action->long();
+
+            echo sprintf(
+                "\n\nButton Release execute LONG: %d\n\n",
+                $actualState,
+            );
         } else {
             $this->action->short();
+
+            echo sprintf(
+                "\n\nButton Release execute SHORT: %d\n\n",
+                $actualState,
+            );
         }
 
         $this->reset();
