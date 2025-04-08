@@ -67,8 +67,7 @@ readonly class RNSEReader implements Reader
             $frame->toString()
         ));
 
-        var_dump($frame->getDataString(), $frame->getData());
-
+        // Byte 6 represents the number of rotation clicks
         //        '373001004001' => $this->buttons->wheel->wheelLeft(),
         if (str_starts_with($frame->getDataString(), '3730010040')) {
             $clicks = $frame->byte(5);
@@ -78,6 +77,7 @@ readonly class RNSEReader implements Reader
             } while ($clicks > 0);
         }
 
+        // Byte 6 represents the number of rotation clicks
         //        '373001002001' => $this->buttons->wheel->wheelRight(),
         if (str_starts_with($frame->getDataString(), '3730010020')) {
             $clicks = $frame->byte(5);

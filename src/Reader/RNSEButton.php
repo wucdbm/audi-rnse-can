@@ -15,8 +15,6 @@ namespace Wucdbm\AudiRnseCan\Reader;
 
 class RNSEButton
 {
-    public const SENSITIVITY = 4;
-
     private int $state = 0;
     private bool $isReactingToHold = false;
 
@@ -29,12 +27,6 @@ class RNSEButton
     public function press(): void
     {
         ++$this->state;
-
-        echo sprintf(
-            "\n\nButton Press State: %d | %d\n\n",
-            $this->state,
-            floor($this->state / self::SENSITIVITY),
-        );
 
         if ($this->state >= $this->longThreshold) {
             $this->isReactingToHold = $this->action->hold($this->state);
@@ -53,27 +45,10 @@ class RNSEButton
             return;
         }
 
-        $actualState = floor($this->state / self::SENSITIVITY);
-
-        echo sprintf(
-            "\n\nButton Release Actual State: %d\n\n",
-            $actualState,
-        );
-
         if ($this->state >= $this->longThreshold) {
             $this->action->long();
-
-            echo sprintf(
-                "\n\nButton Release execute LONG: %d\n\n",
-                $actualState,
-            );
         } else {
             $this->action->short();
-
-            echo sprintf(
-                "\n\nButton Release execute SHORT: %d\n\n",
-                $actualState,
-            );
         }
 
         $this->reset();
