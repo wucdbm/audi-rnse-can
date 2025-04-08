@@ -19,6 +19,11 @@ use Wucdbm\AudiRnseCan\CanBusFrame;
 class MFSWReader implements Reader
 {
     private bool $isDetected = false;
+
+    // Up and down are relevant to A6 C5
+    // They can be held down for a period of time
+    private int $up = 0;
+    private int $down = 0;
     private int $press = 0;
 
     public function __construct(
@@ -59,6 +64,10 @@ class MFSWReader implements Reader
             '8E/3904', '8P/390B', '8J/390B' => $this->onWheelUp($frame),
             // Scan Wheel Down
             '8E/3905', '8P/390C', '8J/390C' => $this->onWheelDown($frame),
+            // A6 C5 Button Up
+            '4B/3902' => $this->onButtonUp($frame),
+            // A6 C5 Button Down
+            '4B/4903' => $this->onButtonDown($frame),
             // Scan Wheel Press
             '8E/3908', '8P/3908', '8J/3908' => $this->onWheelPress(),
             default => ''
@@ -66,14 +75,18 @@ class MFSWReader implements Reader
 
         // 3900 is MFSW idle according to janssuuh.nl
         // "Passive state Multifunction steering wheel"
+        // On A6 C5, 3A00 is the telephone wheel mode idle/passive
+        // TODO Both 3900 and 3A00 are MFSW idle messages
+        // They are being sent regardless of what's going on
+        // We should only react to those if $press is > 0
         if ('3900' === $frame->getDataString() || '3A00' === $frame->getDataString()) {
-            $this->onWheelRelease($frame);
+            $this->onMFSWIdle($frame);
         }
     }
 
     public function onWheelUp(CanBusFrame $frame): void
     {
-        $this->press = 0;
+        $this->resetState();
         $this->output->writeln('MFSWListener: onWheelUp');
 
         if (!$this->tvSubscriber->isTvModeActive()) {
@@ -87,7 +100,7 @@ class MFSWReader implements Reader
 
     public function onWheelDown(CanBusFrame $frame): void
     {
-        $this->press = 0;
+        $this->resetState();
         $this->output->writeln('MFSWListener: onWheelDown');
 
         if (!$this->tvSubscriber->isTvModeActive()) {
@@ -97,6 +110,40 @@ class MFSWReader implements Reader
         }
 
         $this->subscriber->onWheelDown($frame);
+    }
+
+    public function onButtonUp(CanBusFrame $frame): void
+    {
+        $this->output->writeln('MFSWListener: onButtonUp');
+
+        if (!$this->tvSubscriber->isTvModeActive()) {
+            $this->output->writeln('MFSWListener: TV Mode not active, will not act');
+
+            return;
+        }
+
+        ++$this->up;
+
+        if ($this->up > 1) {
+            $this->subscriber->onButtonUpHold($frame);
+        }
+    }
+
+    public function onButtonDown(CanBusFrame $frame): void
+    {
+        $this->output->writeln('MFSWListener: onButtonDown');
+
+        if (!$this->tvSubscriber->isTvModeActive()) {
+            $this->output->writeln('MFSWListener: TV Mode not active, will not act');
+
+            return;
+        }
+
+        ++$this->down;
+
+        if ($this->down > 1) {
+            $this->subscriber->onButtonDownHold($frame);
+        }
     }
 
     public function onWheelPress(): void
@@ -112,14 +159,30 @@ class MFSWReader implements Reader
         ++$this->press;
     }
 
-    public function onWheelRelease(CanBusFrame $frame): void
+    public function onMFSWIdle(CanBusFrame $frame): void
     {
         $this->output->writeln('MFSWListener: onWheelRelease');
 
         if (!$this->tvSubscriber->isTvModeActive()) {
             $this->output->writeln('MFSWListener: TV Mode not active, will not act');
 
-            $this->press = 0;
+            $this->resetState();
+
+            return;
+        }
+
+        if (1 === $this->up) {
+            // A6 C5 handling of buttons
+            $this->subscriber->onWheelUp($frame);
+            $this->resetState();
+
+            return;
+        }
+
+        if (1 === $this->down) {
+            // A6 C5 handling of buttons
+            $this->subscriber->onWheelDown($frame);
+            $this->resetState();
 
             return;
         }
@@ -136,7 +199,14 @@ class MFSWReader implements Reader
             $this->subscriber->onWheelLongPress($frame);
         }
 
-        $this->press = 0;
+        $this->resetState();
+    }
+
+    private function resetState(): void
+    {
+        $this->up = 0;
+        $this->down = 0;
+        $this->resetState();
     }
 
     public function isDetected(): bool
