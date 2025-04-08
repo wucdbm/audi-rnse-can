@@ -22,8 +22,8 @@ class MFSWReader implements Reader
 
     // Up and down are relevant to A6 C5
     // They can be held down for a period of time
-    private int $up = 0;
-    private int $down = 0;
+    //    private int $up = 0;
+    //    private int $down = 0;
     private int $press = 0;
 
     public function __construct(
@@ -64,10 +64,10 @@ class MFSWReader implements Reader
             '8E/3904', '8P/390B', '8J/390B' => $this->onWheelUp($frame),
             // Scan Wheel Down
             '8E/3905', '8P/390C', '8J/390C' => $this->onWheelDown($frame),
-            // A6 C5 Button Up
-            '4B/3902' => $this->onButtonUp($frame),
-            // A6 C5 Button Down
-            '4B/4903' => $this->onButtonDown($frame),
+            //            // A6 C5 Button Up
+            //            '4B/3902' => $this->onButtonUp($frame),
+            //            // A6 C5 Button Down
+            //            '4B/4903' => $this->onButtonDown($frame),
             // Scan Wheel Press
             '8E/3908', '8P/3908', '8J/3908' => $this->onWheelPress(),
             default => ''
@@ -112,39 +112,39 @@ class MFSWReader implements Reader
         $this->subscriber->onWheelDown($frame);
     }
 
-    public function onButtonUp(CanBusFrame $frame): void
-    {
-        $this->output->writeln('MFSWListener: onButtonUp');
+    //    public function onButtonUp(CanBusFrame $frame): void
+    //    {
+    //        $this->output->writeln('MFSWListener: onButtonUp');
+    //
+    //        if (!$this->tvSubscriber->isTvModeActive()) {
+    //            $this->output->writeln('MFSWListener: TV Mode not active, will not act');
+    //
+    //            return;
+    //        }
+    //
+    //        ++$this->up;
+    //
+    //        if ($this->up > 1) {
+    //            $this->subscriber->onButtonUpHold($frame);
+    //        }
+    //    }
 
-        if (!$this->tvSubscriber->isTvModeActive()) {
-            $this->output->writeln('MFSWListener: TV Mode not active, will not act');
-
-            return;
-        }
-
-        ++$this->up;
-
-        if ($this->up > 1) {
-            $this->subscriber->onButtonUpHold($frame);
-        }
-    }
-
-    public function onButtonDown(CanBusFrame $frame): void
-    {
-        $this->output->writeln('MFSWListener: onButtonDown');
-
-        if (!$this->tvSubscriber->isTvModeActive()) {
-            $this->output->writeln('MFSWListener: TV Mode not active, will not act');
-
-            return;
-        }
-
-        ++$this->down;
-
-        if ($this->down > 1) {
-            $this->subscriber->onButtonDownHold($frame);
-        }
-    }
+    //    public function onButtonDown(CanBusFrame $frame): void
+    //    {
+    //        $this->output->writeln('MFSWListener: onButtonDown');
+    //
+    //        if (!$this->tvSubscriber->isTvModeActive()) {
+    //            $this->output->writeln('MFSWListener: TV Mode not active, will not act');
+    //
+    //            return;
+    //        }
+    //
+    //        ++$this->down;
+    //
+    //        if ($this->down > 1) {
+    //            $this->subscriber->onButtonDownHold($frame);
+    //        }
+    //    }
 
     public function onWheelPress(): void
     {
@@ -171,27 +171,27 @@ class MFSWReader implements Reader
             return;
         }
 
-        if ($this->up > 0) {
-            if (1 === $this->up) {
-                // A6 C5 handling of buttons
-                $this->subscriber->onButtonUpPress($frame);
-            }
+        //        if ($this->up > 0) {
+        //            if (1 === $this->up) {
+        //                // A6 C5 handling of buttons
+        //                $this->subscriber->onButtonUpPress($frame);
+        //            }
+        //
+        //            $this->resetState();
+        //
+        //            return;
+        //        }
 
-            $this->resetState();
-
-            return;
-        }
-
-        if ($this->down > 0) {
-            if (1 === $this->down) {
-                // A6 C5 handling of buttons
-                $this->subscriber->onButtonDownPress($frame);
-            }
-
-            $this->resetState();
-
-            return;
-        }
+        //        if ($this->down > 0) {
+        //            if (1 === $this->down) {
+        //                // A6 C5 handling of buttons
+        //                $this->subscriber->onButtonDownPress($frame);
+        //            }
+        //
+        //            $this->resetState();
+        //
+        //            return;
+        //        }
 
         if (0 === $this->press) {
             return;
@@ -210,8 +210,8 @@ class MFSWReader implements Reader
 
     private function resetState(): void
     {
-        $this->up = 0;
-        $this->down = 0;
+        //        $this->up = 0;
+        //        $this->down = 0;
         $this->press = 0;
     }
 
