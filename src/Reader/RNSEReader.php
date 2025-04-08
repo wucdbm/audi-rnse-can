@@ -69,9 +69,25 @@ readonly class RNSEReader implements Reader
 
         var_dump($frame->getDataString(), $frame->getData());
 
+        //        '373001004001' => $this->buttons->wheel->wheelLeft(),
+        if (str_starts_with($frame->getDataString(), '3730010040')) {
+            $clicks = $frame->byte(5);
+            do {
+                $this->buttons->wheel->wheelLeft();
+                --$clicks;
+            } while ($clicks > 0);
+        }
+
+        //        '373001002001' => $this->buttons->wheel->wheelRight(),
+        if (str_starts_with($frame->getDataString(), '3730010020')) {
+            $clicks = $frame->byte(5);
+            do {
+                $this->buttons->wheel->wheelRight();
+                --$clicks;
+            } while ($clicks > 0);
+        }
+
         match ($frame->getDataString()) {
-            '373001004001' => $this->buttons->wheel->wheelLeft(),
-            '373001002001' => $this->buttons->wheel->wheelRight(),
             '373001400000' => $this->buttons->up->press(),
             '373004400000' => $this->buttons->up->release(),
             '373001800000' => $this->buttons->down->press(),
