@@ -102,7 +102,10 @@ readonly class RNSEReader implements Reader
             '373004010000' => $this->buttons->previous->release(),
             '373001000100' => $this->buttons->setup->press(),
             '373004000100' => $this->buttons->setup->release(),
-            default => ''
+            default => $this->output->writeln(sprintf(
+                'Unhandled RNS-E message: %s',
+                $frame->getDataString(),
+            ))
         };
     }
 }
