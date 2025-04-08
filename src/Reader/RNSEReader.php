@@ -67,6 +67,8 @@ readonly class RNSEReader implements Reader
             $frame->toString()
         ));
 
+        var_dump($frame->getDataString(), $frame->getData());
+
         match ($frame->getDataString()) {
             '373001004001' => $this->buttons->wheel->wheelLeft(),
             '373001002001' => $this->buttons->wheel->wheelRight(),
