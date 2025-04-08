@@ -161,7 +161,7 @@ class MFSWReader implements Reader
 
     public function onMFSWIdle(CanBusFrame $frame): void
     {
-        $this->output->writeln('MFSWListener: onWheelRelease');
+        $this->output->writeln('MFSWListener: onMFSWIdle');
 
         if (!$this->tvSubscriber->isTvModeActive()) {
             $this->output->writeln('MFSWListener: TV Mode not active, will not act');
@@ -174,7 +174,7 @@ class MFSWReader implements Reader
         if ($this->up > 0) {
             if (1 === $this->up) {
                 // A6 C5 handling of buttons
-                $this->subscriber->onWheelUp($frame);
+                $this->subscriber->onButtonUpPress($frame);
             }
 
             $this->resetState();
@@ -185,7 +185,7 @@ class MFSWReader implements Reader
         if ($this->down > 0) {
             if (1 === $this->down) {
                 // A6 C5 handling of buttons
-                $this->subscriber->onWheelDown($frame);
+                $this->subscriber->onButtonDownPress($frame);
             }
 
             $this->resetState();

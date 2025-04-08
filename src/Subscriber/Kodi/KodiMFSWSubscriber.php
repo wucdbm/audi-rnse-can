@@ -34,6 +34,16 @@ readonly class KodiMFSWSubscriber implements MFSWSubscriber
         $this->controls->left();
     }
 
+    public function onButtonUpPress(CanBusFrame $frame): void
+    {
+        $this->controls->previous();
+    }
+
+    public function onButtonDownPress(CanBusFrame $frame): void
+    {
+        $this->controls->next();
+    }
+
     public function onButtonUpHold(CanBusFrame $frame): void
     {
         $this->controls->seekBackward();

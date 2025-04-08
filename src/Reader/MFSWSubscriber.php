@@ -21,6 +21,10 @@ interface MFSWSubscriber
 
     public function onWheelDown(CanBusFrame $frame): void;
 
+    public function onButtonUpPress(CanBusFrame $frame): void;
+
+    public function onButtonDownPress(CanBusFrame $frame): void;
+
     public function onButtonUpHold(CanBusFrame $frame): void;
 
     public function onButtonDownHold(CanBusFrame $frame): void;
