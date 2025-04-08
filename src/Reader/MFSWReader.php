@@ -212,7 +212,7 @@ class MFSWReader implements Reader
     {
         $this->up = 0;
         $this->down = 0;
-        $this->resetState();
+        $this->press = 0;
     }
 
     public function isDetected(): bool
