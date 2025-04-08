@@ -58,7 +58,7 @@ $kodiControls = new HTTPJSONRPCKodiControls(
 $tvModeSubscriber = new KodiRNSETVModeSubscriber($output, $kodiControls);
 $buttons = KodiRNSEButtonsFactory::create($output, $kodiControls);
 
-$carModelContainer = new CarModelContainer('8P', 2011);
+$carModelContainer = new CarModelContainer('4B', 2003);
 // $carModelReader = new CarModelReader($output, $carModelContainer);
 $timeReader = new TimeReader($output);
 $mfswReader = new MFSWReader(
